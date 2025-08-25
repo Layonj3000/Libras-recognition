@@ -48,6 +48,7 @@ After installing the dependencies, you can run the project using your webcam:
 
 1. **Start the application:**
    ```bash
+   cd src
    python main.py
    
 ## 👨‍💻 Authors
