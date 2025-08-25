@@ -41,7 +41,15 @@ Follow the instructions below to set up and run the project on your local machin
     ```bash
     pip install -r requirements.txt
     ```
-    
+
+## ▶️ How to Use
+
+After installing the dependencies, you can run the project using your webcam:
+
+1. **Start the application:**
+   ```bash
+   python main.py
+   
 ## 👨‍💻 Authors
 <div>
   <table style="margin: 0 auto;">
