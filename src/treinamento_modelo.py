@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 import joblib
+from hand_tracker import HandTracker
 
 NOME_ARQUIVO_CSV = 'libras_landmarks.csv'
 NOME_ARQUIVO_MODELO = 'modelo_libras.pkl'
@@ -19,14 +20,7 @@ print(y.value_counts().sort_index())
 
 # --- PRÉ-PROCESSAMENTO E NORMALIZAÇÃO ---
 def normalizar_landmarks(landmarks_row):
-    landmarks = np.array(landmarks_row).reshape(-1, 3)
-    ponto_referencia = landmarks[0].copy()
-    landmarks_relativos = landmarks - ponto_referencia
-    dist_max = np.max(np.linalg.norm(landmarks_relativos, axis=1))
-    if dist_max == 0:
-        return np.zeros_like(landmarks_relativos.flatten())
-    landmarks_normalizados = landmarks_relativos / dist_max
-    return landmarks_normalizados.flatten()
+    return HandTracker._normalizar_landmarks(None, landmarks_row)
 
 print("\nProcessando e normalizando os dados...")
 X_processed = X.apply(normalizar_landmarks, axis=1, result_type='expand')

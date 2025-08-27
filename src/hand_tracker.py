@@ -7,7 +7,7 @@ class HandTracker:
     """
     Classe para rastrear mãos e reconhecer gestos usando MediaPipe e um modelo de ML.
     """
-    def __init__(self, model_path, mode=False, max_hands=1, model_complexity=1, detection_con=0.5, track_con=0.5):
+    def __init__(self, model_path=None, mode=False, max_hands=1, model_complexity=1, detection_con=0.5, track_con=0.5):
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(
             static_image_mode=mode,
@@ -18,7 +18,7 @@ class HandTracker:
         )
         self.mp_draw = mp.solutions.drawing_utils
         self.drawing_styles = mp.solutions.drawing_styles
-        self.model = joblib.load(model_path)
+        self.model = joblib.load(model_path) if model_path else None
 
     def find_hands(self, image, draw=True):
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

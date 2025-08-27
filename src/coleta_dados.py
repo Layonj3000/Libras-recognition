@@ -1,20 +1,14 @@
 import cv2
-import mediapipe as mp
 import csv
 import os
+from hand_tracker import HandTracker  
 
 # --- CONFIGURAÇÕES ---
 NOME_ARQUIVO_CSV = 'libras_landmarks.csv'
 LETRAS_PARA_COLETAR = "abcdefgilmnopqrstuvwy" # Tirei as letras que tem movimentos grandes(h, j, k, x, z)
 
-# --- INICIALIZAÇÃO DO MEDIAPIPE ---
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(
-    static_image_mode=False,
-    max_num_hands=1,
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5)
-mp_drawing = mp.solutions.drawing_utils
+# --- INICIALIZAÇÃO DO HANDTRACKER ---
+tracker = HandTracker(model_path=None, max_hands=1)
 
 # --- PREPARAÇÃO DO ARQUIVO CSV ---
 header = ['label']
@@ -41,13 +35,10 @@ while cap.isOpened():
         continue
 
     image = cv2.flip(image, 1)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    results = hands.process(image_rgb)
+    image, results = tracker.find_hands(image, draw=True)
 
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
-            mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-            
             key = cv2.waitKey(5) & 0xFF
             char_key = chr(key).lower()
 
@@ -55,15 +46,15 @@ while cap.isOpened():
                 landmarks_row = [char_key]
                 for lm in hand_landmarks.landmark:
                     landmarks_row.extend([lm.x, lm.y, lm.z])
-                
+
                 with open(NOME_ARQUIVO_CSV, mode='a', newline='') as f:
                     writer = csv.writer(f)
                     writer.writerow(landmarks_row)
-                
+
                 print(f"Dados salvos para a letra: '{char_key.upper()}'")
 
     cv2.imshow('Coleta de Dados - LIBRAS', image)
-    
+
     if cv2.waitKey(5) & 0xFF == ord('q'):
         break
 
